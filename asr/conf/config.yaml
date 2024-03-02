@@ -1,0 +1,11 @@
+
+url: "http://127.0.0.1:8001/asr"
+
+data:
+  data_dir: 'data'
+  csv_file_path: 'data/cv-valid-dev-text/cv-valid-dev.csv'
+  updated_csv_filepath: 'data/cv-valid-dev-text/cv-valid-dev-updated.csv'
+
+audio_transcriber:
+  model_name: "facebook/wav2vec2-large-960h"
+  target_sr: 16000
