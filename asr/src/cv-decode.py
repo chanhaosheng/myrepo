@@ -1,15 +1,29 @@
 import os
 import pandas as pd
 import requests
-from omegaconf import OmegaConf
+from omegaconf import DictConfig, OmegaConf
 
 
-def load_config():
+def load_config() -> DictConfig:
+    """Load the application configuration from a YAML file.
+
+    Returns:
+        DictConfig: Loaded configuration object.
+    """
     config_path = "conf/config.yaml"
     return OmegaConf.load(config_path)
 
 
-def transcribe_audio(file_path, config):
+def transcribe_audio(file_path: str, config: DictConfig) -> str:
+    """Transcribe audio from a file using a specified API.
+
+    Args:
+        file_path (str): Path to the audio file to be transcribed.
+        config (DictConfig): Application configuration including the API URL.
+
+    Returns:
+        str: Transcribed text or an error message.
+    """
     url = config.url
     files = {'file': open(file_path, 'rb')}
     response = requests.post(url, files=files)
@@ -20,11 +34,18 @@ def transcribe_audio(file_path, config):
         return "Error: Failed to transcribe"
 
 
-def input_to_csv(config):
-    # Step 1: Read the CSV
+def input_to_csv(config: DictConfig) -> None:
+    """ Transcribe audio files iteratively and update to column in dataset
+        1. Read a dataset from CSV
+        2. transcribe audio files for audio files that matches dataset list
+        3. updated column of dataset with transcription
+        4. save updated dataset
+
+    Args:
+        config (DictConfig): Filepath of dataset
+    """
     transcribed_dataset = pd.read_csv(config.data.csv_file_path)
 
-    # Step 2: Iterate over audio files and transcribe
     transcriptions_dict = {}
     for filename in transcribed_dataset['filename']:
         mp3_file_path = os.path.join(config.data.data_dir, filename)
@@ -33,13 +54,11 @@ def input_to_csv(config):
             transcriptions_dict[filename] = transcription
             print(f"Transcribed {filename}")
 
-    # Step 3: Update dataset with transcriptions
     transcribed_dataset['generated_text'] = \
         transcribed_dataset['filename'].apply(
             lambda x: transcriptions_dict.get(x, "")
         )
 
-    # Step 4: Save updated dataset as CSV
     transcribed_dataset.to_csv(config.data.updated_csv_filepath, index=False)
     print(f"Updated CSV saved to {config.data.updated_csv_filepath}")
 
