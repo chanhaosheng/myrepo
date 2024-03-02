@@ -29,7 +29,9 @@ def transcribe_audio(file_path: str, config: DictConfig) -> str:
     response = requests.post(url, files=files)
     if response.status_code == 200:
         data = response.json()
-        return data.get("transcription", "")
+        transcription = data.get("transcription", "")
+        duration = data.get("duration", "0.0")
+        return transcription, duration
     else:
         return "Error: Failed to transcribe"
 
@@ -46,18 +48,23 @@ def input_to_csv(config: DictConfig) -> None:
     """
     transcribed_dataset = pd.read_csv(config.data.csv_file_path)
 
-    transcriptions_dict = {}
+    transcriptions = []
+    durations = []
+
     for filename in transcribed_dataset['filename']:
         mp3_file_path = os.path.join(config.data.data_dir, filename)
         if os.path.exists(mp3_file_path):
-            transcription = transcribe_audio(mp3_file_path, config)
-            transcriptions_dict[filename] = transcription
+            transcription, duration = transcribe_audio(mp3_file_path, config)
             print(f"Transcribed {filename}")
+        else:
+            transcription, duration = "", 0.0
+            print(f"Skipped {filename}")
 
-    transcribed_dataset['generated_text'] = \
-        transcribed_dataset['filename'].apply(
-            lambda x: transcriptions_dict.get(x, "")
-        )
+        transcriptions.append(transcription.lower())
+        durations.append(float(duration))
+
+    transcribed_dataset['generated_text'] = transcriptions
+    transcribed_dataset['duration'] = durations
 
     transcribed_dataset.to_csv(config.data.updated_csv_filepath, index=False)
     print(f"Updated CSV saved to {config.data.updated_csv_filepath}")
