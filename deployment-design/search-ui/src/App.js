@@ -7,10 +7,15 @@ import "@elastic/eui/dist/eui_theme_light.css";
 import ElasticSearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 
 import {
+  ErrorBoundary,
+  Facet,
+  Paging,
+  PagingInfo,
+  Results,
+  ResultsPerPage,
   SearchProvider,
   SearchBox,
-  Results,
-  Paging,
+  Sorting,
   WithSearch
 } from "@elastic/react-search-ui";
 import {
@@ -40,6 +45,7 @@ const config = {
   apiConnector: connector,
   hasA11yNotifications: true,
   searchQuery: {
+    filters: [],
     search_fields: {
       generated_text: {},
       duration: {},
@@ -61,34 +67,172 @@ const config = {
       duration: { raw: {} },
     },
   },
+    disjunctiveFacets: [
+      "filename.keyword",
+      "states.keyword",
+      "date_established",
+      "location"
+    ],
+    facets: {
+      up_votes: {
+        type: "range",
+        ranges: [
+          { from: 0, to: 50, name: "0 - 50" },
+          { from: 51, to: 100, name: "51 - 100" },
+          { from: 101, to: 200, name: "101 - 200" },
+          { from: 201, name: "200+" }
+        ]
+      },
+      down_votes: {
+        type: "range",
+        ranges: [
+          { from: 0, to: 50, name: "0 - 50" },
+          { from: 51, to: 100, name: "51 - 100" },
+          { from: 101, to: 200, name: "101 - 200" },
+          { from: 201, name: "200+" }
+        ]
+      },
+      "age.keyword": { type: "range" },
+      "gender.keyword": { type: "gender" },
+      "accent.keyword": { type: "gender" },
+    },
+  autocompleteQuery: {
+    results: {
+      search_fields: {
+        generated_text: {}
+      },
+      resultsPerPage: 5,
+      result_fields: {
+        title: {
+          snippet: {
+            size: 100,
+            fallback: true
+          }
+        },
+      }
+    },
+    suggestions: {
+      types: {
+        documents: {
+          fields: ["filename"]
+        }
+      },
+      size: 4
+    }
+  },
 };
 
+const SORT_OPTIONS = [
+  {
+    name: "filename",
+    value: []
+  },
+  {
+    name: "up_votes",
+    value: [
+      {
+        field: "up_votes",
+        direction: "asc"
+      }
+    ]
+  },
+  {
+    name: "down_votes",
+    value: [
+      {
+        field: "down_votes",
+        direction: "asc"
+      }
+    ]
+  },
+  {
+    name: "age",
+    value: []
+  },
+];
 
 export default function App() {
   return (
-    <div>
-      <SearchProvider config={config}>
-        <WithSearch mapContextToProps={({ results, searchTerm, setSearchTerm }) => ({ results, searchTerm, setSearchTerm })}>
-          {({ results, searchTerm, setSearchTerm }) => (
+    <SearchProvider config={config}>
+      <WithSearch
+        mapContextToProps={({ wasSearched }) => ({
+          wasSearched
+        })}
+      >
+        {({ wasSearched }) => {
+          return (
             <div className="App">
-              <Layout
-                header={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
-                bodyContent={<Results results={results} titleField="filename" />}
-                bodyFooter={<Paging />}
-              />
+              <ErrorBoundary>
+                <Layout
+                  header={
+                    <SearchBox
+                      autocompleteMinimumCharacters={3}
+                      autocompleteResults={{
+                        linkTarget: "_blank",
+                        sectionTitle: "Results",
+                        titleField: "title",
+                        shouldTrackClickThrough: true,
+                        clickThroughTags: ["test"]
+                      }}
+                      autocompleteSuggestions={true}
+                      debounceLength={0}
+                    />
+                  }
+                  sideContent={
+                    <div>
+                       {wasSearched && (
+                         <Sorting label={"Sort by"} sortOptions={SORT_OPTIONS} />
+                       )}
+                      <Facet
+                        field="up_votes"
+                        label="up_votes"
+                        filterType="any"
+                        isFilterable={true}
+                      />
+                      <Facet
+                        field="down_votes"
+                        label="down_votes"
+                        filterType="any"
+                        isFilterable={true}
+                      />
+                      <Facet
+                        field="age.keyword"
+                        label="age"
+                        filterType="any"
+                        isFilterable={true}
+                      />
+                      <Facet
+                        field="gender.keyword"
+                        label="gender"
+                        filterType="any"
+                        isFilterable={true}
+                      />
+                      <Facet
+                        field="accent.keyword"
+                        label="accent"
+                        filterType="any"
+                        isFilterable={true}
+                      />
+                    </div>
+                  }
+                  bodyContent={
+                    <Results
+                      titleField="filename"
+                      shouldTrackClickThrough={true}
+                      />}
+                  bodyHeader={
+                    <React.Fragment>
+                      {wasSearched && <PagingInfo />}
+                      {wasSearched && <ResultsPerPage />}
+                    </React.Fragment>
+                  }
+                  bodyFooter={<Paging />}
+                />
+              </ErrorBoundary>
             </div>
-          )}
-        </WithSearch>
-      </SearchProvider>
-    </div>
+          );
+        }}
+      </WithSearch>
+    </SearchProvider>
   );
 }
-
-
-// export default function App() {
-//   return (
-//     <div className="App">
-//       <h1>Hello world!</h1>
-//     </div>
-//   );
-// }
