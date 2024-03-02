@@ -7,12 +7,9 @@ import "@elastic/eui/dist/eui_theme_light.css";
 import ElasticSearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 
 import {
-  ErrorBoundary,
   SearchProvider,
   SearchBox,
   Results,
-  PagingInfo,
-  ResultsPerPage,
   Paging,
   WithSearch
 } from "@elastic/react-search-ui";
@@ -28,9 +25,12 @@ const connector = new ElasticSearchAPIConnector({
 //     process.env.REACT_ELASTICSEARCH_API_KEY ||
 //     "SlUzdWE0QUJmN3VmYVF2Q0F6c0I6TklyWHFIZ3lTbHF6Yzc2eEtyeWFNdw=="
     connectionOptions: {
-      // Optional connection options.
-      "Access-Control-Allow-Headers": "Accept, Access-Control-Allow-Headers, Authorization, Content-Type"
-      }
+      // Optional connection options. TODO disable in production
+      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+      "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, HEAD",
+      "Access-Control-Allow-Headers": "Accept, Access-Control-Allow-Headers, Authorization, Content-Type, Cache-Control, Origin, Pragma, X-Requested-With",
+      }
     }
 );
 
