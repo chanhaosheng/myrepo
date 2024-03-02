@@ -35,7 +35,7 @@ const connector = new ElasticSearchAPIConnector({
       "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, HEAD",
       "Access-Control-Allow-Headers": "Accept, Access-Control-Allow-Headers, Authorization, Content-Type, Cache-Control, Origin, Pragma, X-Requested-With",
-      }
+      }
     }
 );
 
@@ -55,6 +55,8 @@ const config = {
     },
     result_fields: {
       filename: { raw: {} },
+      up_votes: { raw: {} },
+      down_votes: { raw: {} },
       generated_text: {
         snippet: {
           size: 100,
@@ -132,7 +134,7 @@ const SORT_OPTIONS = [
     value: [
       {
         field: "up_votes",
-        direction: "asc"
+        direction: "desc"
       }
     ]
   },
@@ -141,13 +143,9 @@ const SORT_OPTIONS = [
     value: [
       {
         field: "down_votes",
-        direction: "asc"
+        direction: "desc"
       }
     ]
-  },
-  {
-    name: "age",
-    value: []
   },
 ];
 
