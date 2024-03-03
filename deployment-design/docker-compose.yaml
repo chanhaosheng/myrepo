@@ -6,8 +6,10 @@ services:
     container_name: es01
     environment:
       - node.name=es01
-      - cluster.name=es-docker-cluster
+      # - node.roles=master, data
+      # - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.security.enabled=false
@@ -34,8 +36,10 @@ services:
       - es01
     environment:
       - node.name=es02
-      - cluster.name=es-docker-cluster
+      # - node.roles=data
+      # - cluster.name=es-docker-cluster
       - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.security.enabled=false
@@ -66,19 +70,6 @@ services:
     #   - REACT_APP_ELASTICSEARCH_HOST=http://localhost:9200
     ports:
       - 3000:3000
-    networks:
-      - elastic
-
-  cv-indexer:
-    container_name: cv-indexer
-    build:
-      context: .
-      dockerfile: docker/cv-index.Dockerfile
-    depends_on:
-      - es01
-      - es02
-    volumes:
-      - ./elastic-backend/data:/app/data
     networks:
       - elastic
 
