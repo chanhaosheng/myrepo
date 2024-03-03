@@ -76,7 +76,7 @@ services:
       dockerfile: docker/cv-index.Dockerfile
     depends_on:
       - es01
-      # - es02
+      - es02
     volumes:
       - ./elastic-backend/data:/app/data
     networks:
