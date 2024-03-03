@@ -20,6 +20,8 @@ import {
 } from "@elastic/react-search-ui";
 import {
   Layout,
+  SingleLinksFacet,
+  SingleSelectFacet
 } from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
@@ -71,32 +73,12 @@ const config = {
   },
     disjunctiveFacets: [
       "filename.keyword",
-      "states.keyword",
-      "date_established",
-      "location"
+      "gender"
     ],
     facets: {
-      up_votes: {
-        type: "range",
-        ranges: [
-          { from: 0, to: 50, name: "0 - 50" },
-          { from: 51, to: 100, name: "51 - 100" },
-          { from: 101, to: 200, name: "101 - 200" },
-          { from: 201, name: "200+" }
-        ]
-      },
-      down_votes: {
-        type: "range",
-        ranges: [
-          { from: 0, to: 50, name: "0 - 50" },
-          { from: 51, to: 100, name: "51 - 100" },
-          { from: 101, to: 200, name: "101 - 200" },
-          { from: 201, name: "200+" }
-        ]
-      },
-      "age.keyword": { type: "range" },
-      "gender.keyword": { type: "gender" },
-      "accent.keyword": { type: "gender" },
+      "age.keyword": { type: "value" },
+      "gender.keyword": { type: "value" },
+      "accent.keyword": { type: "value" },
     },
   autocompleteQuery: {
     results: {
@@ -182,34 +164,19 @@ export default function App() {
                          <Sorting label={"Sort by"} sortOptions={SORT_OPTIONS} />
                        )}
                       <Facet
-                        field="up_votes"
-                        label="up_votes"
-                        filterType="any"
-                        isFilterable={true}
-                      />
-                      <Facet
-                        field="down_votes"
-                        label="down_votes"
-                        filterType="any"
-                        isFilterable={true}
-                      />
-                      <Facet
-                        field="age.keyword"
+                        field="age"
                         label="age"
-                        filterType="any"
-                        isFilterable={true}
+                        view={SingleLinksFacet}
                       />
                       <Facet
-                        field="gender.keyword"
+                        field="gender"
                         label="gender"
                         filterType="any"
-                        isFilterable={true}
                       />
                       <Facet
-                        field="accent.keyword"
+                        field="accent"
                         label="accent"
-                        filterType="any"
-                        isFilterable={true}
+                        view={SingleSelectFacet}
                       />
                     </div>
                   }
