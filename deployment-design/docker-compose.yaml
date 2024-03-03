@@ -69,6 +69,19 @@ services:
     networks:
       - elastic
 
+  cv-indexer:
+    container_name: cv-indexer
+    build:
+      context: .
+      dockerfile: docker/cv-index.Dockerfile
+    depends_on:
+      - es01
+      # - es02
+    volumes:
+      - ./elastic-backend/data:/app/data
+    networks:
+      - elastic
+
 volumes:
   data01:
   data02:
