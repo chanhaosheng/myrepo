@@ -24,6 +24,9 @@ def create_index(client):
                     "accent": {"type": "keyword"},
                     "duration": {"type": "float"},
                     "generated_text": {"type": "text"},
+                    "suggest": {
+                        "type": "completion"
+                    }
                 }
             },
         },
