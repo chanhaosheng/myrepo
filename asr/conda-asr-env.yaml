@@ -1,0 +1,17 @@
+name: asr-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip=23.3.2
+  - pip:
+      - huggingface-hub==0.21.0
+      - Flask==3.0.2
+      - librosa==0.10.1
+      - numpy==1.26.4
+      - omegaconf==2.3.0
+      - pandas==2.2.1
+      - PyYAML==6.0.1
+      - torch==2.2.1
+      - transformers==4.38.1
