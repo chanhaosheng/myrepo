@@ -10,7 +10,7 @@
 <br>
 
 **To start flask API using docker:**
-- Run From `base/asr` folder to build and up docker
+- Run from `base/asr` folder to build and up docker
 ```
 ./run-docker-compose-asr.sh
 ```
