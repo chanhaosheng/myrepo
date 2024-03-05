@@ -1,6 +1,6 @@
 import librosa
 import torch
-from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
 
 class AudioTranscriber:
@@ -12,6 +12,7 @@ class AudioTranscriber:
         processor (Wav2Vec2Processor): Processor of the Wav2Vec model.
         model (Wav2Vec2ForCTC): Pre-trained Wav2Vec model.
     """
+
     def __init__(self, config: dict) -> None:
         """Initializes audio transcriber with model and target sampling rate.
 
@@ -35,10 +36,12 @@ class AudioTranscriber:
             Containing transcription of the audio and its duration in seconds.
         """
         audio_resampled, _ = librosa.load(file_path, sr=self.target_sr)
-        input_values = self.processor(audio_resampled,
-                                      return_tensors="pt",
-                                      sampling_rate=self.target_sr,
-                                      padding="longest").input_values
+        input_values = self.processor(
+            audio_resampled,
+            return_tensors="pt",
+            sampling_rate=self.target_sr,
+            padding="longest",
+        ).input_values
         logits = self.model(input_values).logits
         predicted_ids = torch.argmax(logits, dim=-1)
         transcription = self.processor.batch_decode(predicted_ids)

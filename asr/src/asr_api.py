@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify
 import os
-from transcribe import AudioTranscriber
+
+from flask import Flask, jsonify, request
 from omegaconf import OmegaConf
+from transcribe import AudioTranscriber
 
 app = Flask(__name__)
+
 
 config_path = "conf/config.yaml"
 config = OmegaConf.load(config_path)
@@ -12,17 +14,17 @@ config = OmegaConf.load(config_path)
 transcriber = AudioTranscriber(config)
 
 
-@app.route('/ping', methods=['GET'])
+@app.route("/ping", methods=["GET"])
 def ping():
-    return 'pong'
+    return "pong"
 
 
-@app.route('/asr', methods=['POST'])
+@app.route("/asr", methods=["POST"])
 def transcribe_audio():
-    if 'file' not in request.files:
+    if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
-    file = request.files['file']
-    if file.filename == '':
+    file = request.files["file"]
+    if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
     temp_dir = "data/temp"
@@ -36,10 +38,7 @@ def transcribe_audio():
 
     os.remove(temp_path)
 
-    response = {
-        "transcription": transcription,
-        "duration": duration
-    }
+    response = {"transcription": transcription, "duration": duration}
     return jsonify(response)
 
 
