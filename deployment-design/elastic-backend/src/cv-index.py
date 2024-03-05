@@ -1,7 +1,16 @@
 import csv
+import logging
+
 import tqdm
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename="app.log",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 DATASET_PATH = "elastic-backend/data/cv-valid-dev-updated.csv"
@@ -24,9 +33,7 @@ def create_index(client):
                     "accent": {"type": "keyword"},
                     "duration": {"type": "float"},
                     "generated_text": {"type": "text"},
-                    "suggest": {
-                        "type": "completion"
-                    }
+                    "suggest": {"type": "completion"},
                 }
             },
         },
@@ -39,7 +46,7 @@ def generate_actions():
     yields a single document. This function is passed into the bulk()
     helper to create many documents in sequence.
     """
-    with open(DATASET_PATH, mode="r", encoding='utf-8') as f:
+    with open(DATASET_PATH, mode="r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
@@ -48,20 +55,22 @@ def generate_actions():
 
 
 def main():
-    print("Creating an index...")
+    logging.info("Creating an index...")
     client = Elasticsearch(["http://localhost:9200"])
     create_index(client)
 
-    print("Indexing documents...")
+    logging.info("Indexing documents...")
     number_of_docs = sum(1 for _ in open(DATASET_PATH)) - 1
     progress = tqdm.tqdm(unit="docs", total=number_of_docs)
     successes = 0
     for ok, _ in streaming_bulk(
-        client=client, index="cv-transcriptions", actions=generate_actions(),
+        client=client,
+        index="cv-transcriptions",
+        actions=generate_actions(),
     ):
         progress.update(1)
         successes += ok
-    print(f"Indexed {successes}/{number_of_docs} documents")
+    logging.info(f"Indexed {successes}/{number_of_docs} documents")
 
 
 if __name__ == "__main__":
