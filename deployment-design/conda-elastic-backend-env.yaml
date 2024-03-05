@@ -1,0 +1,11 @@
+name: elastic-backend-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip=23.3.2
+  - pip:
+      - elastic-transport==8.12.0
+      - elasticsearch==8.12.1
+      - tqdm==4.66.2
