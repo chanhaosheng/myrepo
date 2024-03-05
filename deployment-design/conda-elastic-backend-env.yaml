@@ -8,4 +8,5 @@ dependencies:
   - pip:
       - elastic-transport==8.12.0
       - elasticsearch==8.12.1
+      - omegaconf==2.3.0
       - tqdm==4.66.2
