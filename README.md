@@ -130,7 +130,7 @@ Or replace `localhost` with AWS public address.
 
 # For AWS
 
-In AWS terminal, replace `localhost` with AWS public address in following files:
+In AWS terminal, replace `localhost` with `AWS public address` in following files:
 - `elastic-backend/conf/config.yaml`
 - `searchui/src/Apps.js`
 
@@ -144,3 +144,7 @@ In AWS terminal, replace `localhost` with AWS public address in following files:
 - No need to dockerise where it is not instructed specifically
 - Need to write the duration into column `duration`
 - No intermediary step required to transfer processed `cv-valid-dev` from `asr` to `deployment-design` data folder. Manual step done.
+
+## TODO
+- Resolve search `Cannot read properties of undefined ...` error and resolve non-showing filter function
+- Transcribe whole dataset. Currenly only extract a subset of 500 to csv.
