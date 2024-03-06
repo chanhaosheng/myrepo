@@ -130,10 +130,13 @@ Or replace `localhost` with AWS public address.
 
 # For AWS
 
-Replace `localhost` with AWS public address in following files:
+In AWS terminal, replace `localhost` with AWS public address in following files:
 - `elastic-backend/conf/config.yaml`
 - `searchui/src/Apps.js`
 
+**Deployment url:**
+- http://18.141.175.37:9200/
+- http://18.141.175.37:3000/
 
 ---
 
