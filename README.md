@@ -75,7 +75,7 @@ Output csv will be `base/asr/data/cv-valid-dev-text/cv-valid-dev-updated.csv`
 <br>
 
 **To start ElasticSearch and Search UI using docker:**
-- Run From `base/deployment-design` folder to build and up docker
+- Run from `base/deployment-design` folder to build and up docker
 ```
 ./run-docker-compose-react-search.sh
 ```
@@ -127,6 +127,13 @@ python elastic-backend/src/cv-index.py
 Or replace `localhost` with AWS public address.
 
 <br>
+
+# For AWS
+
+Replace `localhost` with AWS public address in following files:
+- `elastic-backend/conf/config.yaml`
+- `searchui/src/Apps.js`
+
 
 ---
 
